@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Upload</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: #f9fafb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        /* Upload area styles */
+        .upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .upload-area.dragging {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+
+        .upload-area.has-file {
+            border-color: #10b981;
+            background-color: rgba(16, 185, 129, 0.05);
+        }
+
+        .icon-container {
+            height: 3rem;
+            width: 3rem;
+            background-color: #f3f4f6;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem auto;
+        }
+
+        .icon-container.success {
+            background-color: #d1fae5;
+        }
+
+        .icon-container svg {
+            height: 1.5rem;
+            width: 1.5rem;
+            color: #4b5563;
+        }
+
+        .icon-container.success svg {
+            color: #10b981;
+        }
+
+        .upload-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .upload-subtext {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        /* Button styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #4b5563;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-outline:hover {
+            background-color: #f9fafb;
+        }
+
+        .btn-full {
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        /* Hide the file input */
+        .file-input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* File info styles */
+        .file-info {
+            display: none;
+        }
+
+        .upload-area.has-file .default-info {
+            display: none;
+        }
+
+        .upload-area.has-file .file-info {
+            display: block;
+        }
+
+        .submit-container {
+            display: none;
+        }
+
+        .submit-container.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Upload PDF</h1>
+            <p>Upload your PDF file here</p>
+        </div>
+        
+        <div class="upload-area" id="upload-area">
+            <input type="file" id="pdf-upload" class="file-input" accept=".pdf">
+            
+            <div class="default-info">
+                <div class="icon-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                </div>
+                <p class="upload-text">Drag and drop your PDF here</p>
+                <p class="upload-subtext">or</p>
+                <label for="pdf-upload" class="btn btn-primary">Browse files</label>
+                <p class="upload-subtext" style="margin-top: 1rem;">Only PDF files are supported</p>
+            </div>
+            
+            <div class="file-info">
+                <div class="icon-container success">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                </div>
+                <p class="upload-text" id="file-name">filename.pdf</p>
+                <p class="upload-subtext">PDF file uploaded successfully</p>
+                <button class="btn btn-outline" id="change-file">Choose another file</button>
+            </div>
+        </div>
+        
+        <div class="submit-container" id="submit-container">
+            <button class="btn btn-primary btn-full">Submit PDF</button>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('pdf-upload');
+        const fileNameElement = document.getElementById('file-name');
+        const changeFileButton = document.getElementById('change-file');
+        const submitContainer = document.getElementById('submit-container');
+
+        // Handle file selection
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Handle drag and drop
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+        uploadArea.addEventListener('click', function() {
+            if (!uploadArea.classList.contains('has-file')) {
+                fileInput.click();
+            }
+        });
+
+        // Handle change file button
+        changeFileButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            resetFileUpload();
+            fileInput.click();
+        });
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                validateAndProcessFile(file);
+            }
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragging');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragging');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragging');
+            
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                validateAndProcessFile(file);
+            }
+        }
+
+        function validateAndProcessFile(file) {
+            if (file.type === "application/pdf") {
+                fileNameElement.textContent = file.name;
+                uploadArea.classList.add('has-file');
+                submitContainer.classList.add('visible');
+            } else {
+                alert("Please upload a PDF file");
+                resetFileUpload();
+            }
+        }
+
+        function resetFileUpload() {
+            fileInput.value = "";
+            uploadArea.classList.remove('has-file');
+            submitContainer.classList.remove('visible');
+        }
+    </script>
+</body>
+</html>

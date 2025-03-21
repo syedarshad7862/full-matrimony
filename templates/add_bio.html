@@ -1,0 +1,108 @@
+{% extends 'client_base.html' %}
+
+{% block title %}Add Bio - Matrimonial App{% endblock %}
+
+{% block content %}
+<form action="/add-profile" method="post" class="rounded shadow bg-white mx-auto" enctype="multipart/form-data">
+    <div class="row rounded shadow mx-auto bg-white">
+    <div class="m-3 p-4">
+        <!-- <span><img src="/images/logo.jpeg" class="ml-3" alt="" width="150px" height="92px"></span> -->
+        <h2 class="">Enter Your Full Details</h2>
+    </div>
+    <div class="col-md-11 mx-auto p-3 mb-2">
+        <hr class="">
+    <div class="row mb-3 my-4">
+                <!-- <h5>Student Name</h5> -->
+        <div class="col-sm-6 mb-3">
+            <label for="date" class="form-label" id="label">Full Name<span class="text-danger">*</span></label>
+            <input type="text" name="full_name" class="form-control" id="full_name"
+                    placeholder="" aria-describedby="label" required></div>
+            <div class="col-sm-6 mb-3"><label for="date" class="form-label">Gender<span class="text-danger">*</span></label>
+                <select name="gender" class="form-select" aria-label="Default select example" required>
+                    <option value="">Please Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+        </div>
+    <div class="row mb-3 my-4">
+                <!-- <h5>Student Name</h5> -->
+        <div class="col-sm-6 mb-3">
+            <label for="date" class="form-label" id="label">Marital Status<span class="text-danger">*</span></label>
+            <input type="text" name="marital_status" class="form-control" id="marital_status"
+                    placeholder="" aria-describedby="label" required></div>
+            <div class="col-sm-6 mb-3"><label for="complexion" class="form-label">Complexion/Skin Colour<span class="text-danger">*</span></label>
+                <input type="text" name="complexion" class="form-control" id="complexion"
+                    placeholder="" aria-describedby="label" required>
+            </div>
+        </div>
+        <div class="row mb-3">
+                <div class="col-sm-6 mb-3">
+                    <label for="age" class="form-label" id="label">Age<span class="text-danger">*</span></label>
+                    <input type="number" name="age" class="form-control" id="age"
+                            placeholder="" aria-describedby="label" required></div>
+                <div class="col-sm-6 mb-3"><label for="education" class="form-label">Education<span class="text-danger">*</span></label>
+                <input type="text" name="education" class="form-control" id="education"
+                    placeholder="" aria-describedby="label" required>
+                </div>
+        </div>
+        
+    <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="height" class="form-label">Height<span class="text-danger">*</span></label>
+                    <input type="text" name="height" class="form-control" id="height"
+                    placeholder="" aria-describedby="label" required>
+                </div>
+                <div class="col-sm-6 mb-3"><label for="maslak_sect" class="form-label">Maslak Sect<span class="text-danger">*</span></label>
+                    <input type="text" name="maslak_sect" class="form-control" id="maslak_sect"
+                    placeholder="" aria-describedby="label" required>
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="occupation" class="form-label">Occupation<span class="text-danger">*</span></label>
+                    <input type="text" name="occupation" class="form-control" id="occupation"
+                    placeholder="" aria-describedby="label" required>
+                </div>
+                <div class="col-sm-6 mb-3"><label for="native_place" class="form-label">location<span class="text-danger">*</span></label>
+                    <input type="text" name="native_place" class="form-control" id="native_place"
+                    placeholder="" aria-describedby="label" required>
+                    </div>
+        </div>
+        
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="residence" class="form-label">Residence<span class="text-danger">*</span></label>
+                    <input type="text" name="residence" class="form-control" id="residence"
+                    placeholder="" aria-describedby="label" required>
+                </div>
+                <div class="col-sm-6 mb-3"><label for="siblings" class="form-label">Siblings<span class="text-danger">*</span></label>
+                    <input type="text" name="siblings" class="form-control" id="siblings"
+                    placeholder="" aria-describedby="label" required>
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="father" class="form-label">Father<span class="text-danger">*</span></label>
+                    <input type="text" name="father" class="form-control" id="father"
+                    placeholder="" aria-describedby="label" required>
+                </div>
+                <div class="col-sm-6 mb-3"><label for="mother" class="form-label">Mother<span class="text-danger">*</span></label>
+                    <input type="text" name="mother" class="form-control" id="mother"
+                    placeholder="" aria-describedby="label" required>
+                    </div>
+        </div>
+        <div class="row mb-3 mynative_place-4">
+                <div class="col-md-12">
+                    <label for="Preference" class="form-label">Preference</label>
+        <textarea name="preferences" class="form-control" id="Preference" rows="4" placeholder="Enter Preference here..."></textarea>
+
+                    </div>
+
+                    
+        </div>
+        <div class="text-center mx-auto my-5">
+                <button class="btn btn-dark w-50" id="">Submit</button>
+        </div>
+    </div>
+    </div>
+    </form>
+
+
+{% endblock %}

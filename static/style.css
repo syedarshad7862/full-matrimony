@@ -1,0 +1,14 @@
+*{
+padding: 0;
+margin: 0;
+}
+
+/* Upload area styles */
+.upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}

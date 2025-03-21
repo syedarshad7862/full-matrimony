@@ -1,0 +1,44 @@
+{% extends 'client_base.html' %}
+
+{% block title %}Agent - Matrimonial App{% endblock %}
+
+{% block content %}
+    <div class="container my-5">
+        {%if total_profiles == 1%}
+        <h1 class="my-4 text-center"><strong>First Add Profiles</strong></h1>
+        {%else%}
+        <h1 class="my-4 text-center"><strong>All Profiles Details</strong></h1>
+        <div class="d-flex justify-content-center align-items-center flex-wrap my-4">
+          <!-- cards starts -->
+          <div class="card p-2 m-3 bg-light border-0 rounded-5 shadow-sm text-center" style="width: 18rem;">
+            <div class="card-body">
+              <h4 class="card-title text-color">Total Profiles</h4>
+              <!-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> -->
+              <p class="card-text text-wrap fs-6">{{total_profiles}}</p>
+              </div>
+            </div>
+          <div class="card p-2 m-3 bg-light border-0 rounded-5 shadow-sm text-center" style="width: 18rem;">
+            <div class="card-body">
+              <h4 class="card-title text-color">Total Male Profiles</h4>
+              <!-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> -->
+              <p class="card-text text-wrap fs-6">{{total_male}}</p>
+              </div>
+            </div>
+          <div class="card p-2 m-3 bg-light border-0 rounded-5 shadow text-center" style="width: 18rem;">
+            <div class="card-body">
+              <h4 class="card-title text-color">Total Female Profiles</h4>
+              <!-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> -->
+              <p class="card-text text-wrap fs-6">{{total_female}}</p>
+              </div>
+            </div>
+            <!-- <div class="card p-2 m-3 bg-white border-0 rounded-5 shadow-sm text-center" style="width: 18rem;">
+              <div class="card-body">
+                <a href="#"><h4 class="card-title text-color"></h4></a>
+                <p class="card-text text-wrap fs-6">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Assumenda asperiores, minus explicabo nisi sequi quos laudantium odit ducimus sint blanditiis!</p>
+                <a href="https://syedarshad7862.github.io/currency-converter/" class="card-link text-color">Click Here</a>
+              </div>
+            </div> -->
+        </div>
+        {%endif%}
+    </div>
+{% endblock %}

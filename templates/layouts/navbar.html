@@ -1,0 +1,62 @@
+<!-- navbar start  -->
+    <nav class="navbar navbar-expand-lg p-3 shadow navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#"><b>FindPartner</b></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    {%if user%}
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/dashboard">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/find">Find Matchs</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Search</a>
+        </li>
+        <!-- <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          </ul>
+        </li> -->
+        <!-- <li class="nav-item">
+          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+        </li> -->
+      </ul>
+      <div class="d-flex">
+        <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"> -->
+        <div class="btn-group">
+          <button type="button" class="btn btn-dark dropdown-toggle me-2" data-bs-toggle="dropdown" aria-expanded="false">
+            Profile
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/view-profile">View Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/add-profile">Add Profile</a></li>
+            <li><a class="dropdown-item" href="/upload">Upload Pdf</a></li>
+            <!-- <li><a class="dropdown-item" href="/create-vectors">Generate Emebeddings</a></li> -->
+            <!-- <form id="deleteForm" method="post" action="/delete">
+              <button type="submit" class="btn btn-danger dropdown-item" onclick="return confirmDelete()">Delete Biodata</button>
+          </form> -->
+            <form id="deleteFor" method="post" action="/create-vectors">
+              <button type="submit" class="btn btn-danger dropdown-item">Generate Emebeddings</button>
+          </form>
+            <!-- <li><a class="dropdown-item" href="#">Separated link</a></li> -->
+          </ul>
+        </div>
+        <a href="/logout"><button class="btn btn-outline-dark me-2" type="submit">Logout</button></a>
+      </div>
+    </div>
+    {%endif%}
+  </div>
+    </nav>
+    <!-- navbar end -->

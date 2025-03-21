@@ -1,0 +1,73 @@
+{% extends 'client_base.html' %}
+
+{% block title %}Edit Bio - Matrimonial App{% endblock %}
+
+{% block content %}
+
+<form action="/edit-biodata" method="post" class="rounded shadow bg-white mx-auto">
+    <div class="row rounded shadow mx-auto bg-white mb-3">
+    <div class="m-3 p-4">
+        <!-- <span><img src="/images/logo.jpeg" class="ml-3" alt="" width="150px" height="92px"></span> -->
+        <h2 class="">Update Your Details</h2>
+    </div>
+    <div class="col-md-11 mx-auto p-2">
+        <hr class="">
+    <div class="row mb-3 my-4">
+                <!-- <h5>Student Name</h5> -->
+        <div class="col-sm-6 mb-3">
+            <label for="date" class="form-label" id="label">Full Name<span class="text-danger">*</span></label>
+            <input type="text" name="full_name" value="{{biodata.full_name}}" class="form-control" id="full_name"
+                    placeholder="" aria-describedby="label" required></div>
+            <div class="col-sm-6 mb-3"><label for="date" class="form-label">Gender<span class="text-danger">*</span></label>
+                <select name="gender" class="form-select" aria-label="Default select example" required>
+                    <option value="{{biodata.gender}}">{{biodata.gender}}</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-3">
+                <div class="col-sm-6 mb-3">
+                    <label for="age" class="form-label" id="label">Age<span class="text-danger">*</span></label>
+                    <input type="number" name="age" value="{{biodata.age}}"  class="form-control" id="age"
+                            placeholder="" aria-describedby="label" required></div>
+                <div class="col-sm-6 mb-3"><label for="education" class="form-label">Education<span class="text-danger">*</span></label>
+                <select name="education" class="form-select" aria-label="Default select example" required>
+                    <option value="{{biodata.education}}">{{biodata.education}}</option>
+                    <option value="10th">10th</option>
+                    <option value="Below 10th">Below 10th</option>
+                </select>
+                </div>
+        </div>
+        
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="profession" class="form-label">Profession<span class="text-danger">*</span></label>
+                    <select name="profession" class="form-select" aria-label="Default select example" required>
+                                <option value="{{biodata.profession}}">{{biodata.profession}}</option>
+                                <option value="Student">Student</option>
+                                <option value="Employee">Employee</option>
+                        </select>
+                </div>
+                <div class="col-sm-6 mb-3"><label for="date" class="form-label">location<span class="text-danger">*</span></label>
+                    <input type="text" name="location" value="{{biodata.location}}"  class="form-control" id="location"
+                    placeholder="" aria-describedby="label" required>
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-md-12">
+                    <label for="Preference" class="form-label">Preference</label>
+        <textarea name="preference" class="form-control" id="Preference" rows="4" placeholder="Enter Preference here...">{{biodata.preference}}</textarea>
+
+                    </div>
+
+                    
+        </div>
+        <div class="text-center mx-auto my-5">
+                <button class="btn btn-dark w-50" id="">Submit</button>
+        </div>
+    </div>
+    </div>
+    </form>
+
+
+{% endblock %}

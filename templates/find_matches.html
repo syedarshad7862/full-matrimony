@@ -1,0 +1,48 @@
+{% extends 'client_base.html' %}
+
+{% block title %}Find Matches - Matrimonial App{% endblock %}
+
+{% block content %}
+    <div class="container my-5">
+    <h2 class="text-center">Select User Profile</h2>
+    <form action="/show_matches" method="post" enctype="multipart/form-data">
+        <div class="row mb-3 my-3 p-3 rounded shadow bg-white mx-auto">
+                <!-- <h5>Student Name</h5> -->
+        <div class="col-sm-6 mb-3">
+            <label for="date" class="form-label" id="label">Profile Id<span class="text-danger">*</span></label>
+            <select name="profile_id" class="form-select" aria-label="Default select example" required>
+                <option value="">Select Profile</option>
+                {% for profile in profiles %}
+                    {% if profile.get('full_name') %}
+                    <option  value="{{profile['_id']}}">{{profile['full_name']}} ({{profile['profile_id']}})</option>
+                    {% endif %}
+                {% endfor %}
+                
+            </select>
+        </div>
+            <div class="col-sm-6 mb-3"><label for="top" class="form-label">Top Profiles<span class="text-danger">*</span></label>
+                <select name="top" class="form-select" aria-label="Default select example" required>
+                    <option value="">Select Top</option>
+                    <option value="3">3</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+        </div>
+        <div class="text-center mx-auto my-3">
+                <button class="btn btn-dark w-50" id="">Submit</button>
+        </div>
+    </form>
+
+    <!-- <div class="mx-auto ">
+    {% if not selected_profile %}
+    <p>First Select Profile</p>
+    {% else %}
+    <h2>Selected Profile</h2>
+    <p><strong>Name:</strong> {{ selected_profile.full_name }}</p>
+    <p><strong>Age:</strong> {{ selected_profile.age }}</p>
+    <p><strong>Gender:</strong> {{ selected_profile.gender }}</p>
+    <p><strong>Education:</strong> {{ selected_profile.education }}</p>
+    {% endif %}
+    </div> -->
+{% endblock %}
