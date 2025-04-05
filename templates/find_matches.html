@@ -34,15 +34,39 @@
         </div>
     </form>
 
-    <!-- <div class="mx-auto ">
-    {% if not selected_profile %}
-    <p>First Select Profile</p>
-    {% else %}
-    <h2>Selected Profile</h2>
+{% if selected_profile %}
+    <h3>Selected Profile:</h3>
     <p><strong>Name:</strong> {{ selected_profile.full_name }}</p>
+    <p><strong>Marital Status:</strong> {{ selected_profile.marital_status }}</p>
+    <p><strong>Preferences:</strong> {{ selected_profile.preferences }}</p>
     <p><strong>Age:</strong> {{ selected_profile.age }}</p>
-    <p><strong>Gender:</strong> {{ selected_profile.gender }}</p>
-    <p><strong>Education:</strong> {{ selected_profile.education }}</p>
-    {% endif %}
-    </div> -->
+    <!-- Add more selected profile fields if needed -->
+{% endif %}
+
+<h3 class="text-center">Best Matches Profiles:</h3>
+<div class="row">
+    {% for match in matched_profiles %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow">
+        <div class="card-body">
+          <h5 class="card-title">{{ match.name }}</h5>
+          <h6 class="card-subtitle mb-2 text-muted"><strong>Occupation:</strong>: {{ match.occupation }} | Age: {{ match.age }}</h6>
+          <p class="card-text">
+            <strong>Education:</strong> {{ match.education }}<br>
+            <strong>Marital Status:</strong> {{ match.marital_status }}<br>
+            <strong>Maslak/Sect:</strong> {{ match.maslak_sect }}<br>
+            <strong>Native Place:</strong> {{ match.native_place }}<br>
+            <strong>Family Background:</strong> {{ match.family_background }}<br>
+            <strong>Preferences:</strong> {{ match.preferences }}<br>
+          </p>
+          <hr>
+          <p class="card-text">
+            <strong>Compatibility:</strong> {{ match.score_breakdown.compatibility }}<br>
+            <strong>Total Score:</strong> {{ match.score_breakdown.total_score }}
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

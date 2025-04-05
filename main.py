@@ -16,6 +16,8 @@ import json
 import datetime
 from bson import ObjectId
 import pdb
+from dataclasses import asdict
+
 app = FastAPI()
 
 MONGO_URI = os.getenv("MONGO_URI")
@@ -288,29 +290,42 @@ async def show_matches(
             {"request": request, "user": user, "profiles": [], "error": "Profile not found!","selected_profile": selected_profile}
         )
     full_name = selected_profile.get("full_name", "Name not found")
-    print(full_name)
-    print(f"top_k value: {top} type: {type(top)}")
+    # print(full_name)
+    # print(f"top_k value: {top} type: {type(top)}")
     print(db.name)
     
     # function for dataframe & chunks
     texts ,profile_df = await create_chunks(MONGO_URI,db.name,"user_profiles")
     
     matched_profiles, query_text = extract_indices_from_vector(profile_df,full_name,top)
-    # pdb.set_trace()
     # print(matched_profiles.columns)
-    if 'text' in matched_profiles.columns:
-        print(f"profile_df: {matched_profiles}\n query_text: {query_text} \n {matched_profiles['text'].tolist()}")
-    else:
-        print(f"❌ 'text' column not found! Available columns: {matched_profiles.columns}")
+    # if 'text' in matched_profiles.columns:
+    #     print(f"profile_df: {matched_profiles}\n query_text: {query_text} \n {matched_profiles['text'].tolist()}")
+    # else:
+    #     print(f"❌ 'text' column not found! Available columns: {matched_profiles.columns}")
 
     if matched_profiles.empty:
         print("No Matches found!")
     else:
         llm_response = semantic_search_llm(matched_profiles, query_text)
     print(llm_response)
-    final_output = transform_llm_response(llm_response)
-    print(final_output)
-    return RedirectResponse("/find", status_code=303)
+    result = transform_llm_response(llm_response)
+    # Convert all Match dataclass objects to plain dictionaries
+    matches = [m.dict() for m in result['matches']]
+    print(matches)
+    print(f"selected_profile: {selected_profile}")
+    # pdb.set_trace()
+    return templates.TemplateResponse(
+    "find_matches.html",
+    {
+        "request": request,
+        "user": user,
+        "profiles": await db["user_profiles"].find({}).to_list(length=None),
+        "selected_profile": selected_profile,
+        "matched_profiles": matches  # your transformed matches
+    }
+)
+
 
 
     # return templates.TemplateResponse(

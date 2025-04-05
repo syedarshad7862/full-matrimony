@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from langchain_core.prompts import ChatPromptTemplate
 import pdb
+from pydantic import BaseModel, Field
+from typing import List, Optional
 
 load_dotenv()
 
@@ -26,13 +28,57 @@ async def create_chunks(mongodb_uri, db_name, collection_name):
     df = pd.DataFrame(data)
 
     # Ensure required fields exist
-    required_fields = ["profile_id", "full_name", "date_of_birth", "age", "marital_status", 
-                       "gender", "religion", "education", "height", "native_place", "preferences"]
+    required_fields = ["pref_age_range", "pref_marital_status", "pref_complexion", "pref_education", "pref_height", 
+                    "pref_native_place", "pref_maslak_sect", "pref_no_of_siblings", "pref_work_job", "pref_go_to_dargah", "pref_mother_tongue", "pref_deendari","profile_id","sect", "religious_practice", "full_name", "date_of_birth", "age", "marital_status", 
+                "religion", "education", "father" ,"mother", "father_name", "height", "native_place",'occupation','preferences']
     for field in required_fields:
         if field not in df.columns:
             df[field] = "unknown"
 
+    # df["text"] = (
+    #     df["profile_id"].astype(str) + " \n" +
+    #     df["full_name"].astype(str) + " \n" +
+    #     "Date Of Birth: "+ " " + df["date_of_birth"].astype(str) + " \n" +
+    #     "Age: "+ " " + df["age"].astype(str) + " \n" +
+    #     "Marital Status: "+ " " + df["marital_status"].astype(str) + " \n" +
+    #     "Gender: "+ " " + df["gender"].astype(str) + " \n" +
+    #     "complexion: "+ " " + df["complexion"].astype(str) + " \n" +
+    #     "Religion: "+ " " + df["religion"].astype(str) + " \n" +
+    #     "Education: "+ " " + df["education"].astype(str) + " \n" +
+    #     "Height: "+ " " + df["height"].astype(str) + " \n" +
+    #     "Native_place: "+ " " + df["native_place"].astype(str) + " \n" +
+    #     "residence: "+ " " + df["residence"].astype(str) + " \n" +
+    #     "Maslak_sect: "+ " " + df["maslak_sect"].astype(str) + " \n" +
+    #     "occupation: "+ " " + df["occupation"].astype(str) + " \n" +
+    #     "Preference: "+ " " + df["preferences"].astype(str)
+    # )
+    
+    # pk
     df["text"] = (
+        df["full_name"].astype(str) + " \n" +
+        "age_range: "+ " " + df["pref_age_range"].astype(str) + " \n" +
+        "Date Of Birth: "+ " " + df["date_of_birth"].astype(str) + " \n" +
+        "Age: "+ " " + df["age"].astype(str) + " \n" +
+        "Marital Status: "+ " " + df["pref_marital_status"].astype(str) + " \n" +
+        "Complexion: "+ " " + df["pref_complexion"].astype(str) + " \n" +
+        "Education: "+ " " + df["pref_education"].astype(str) + " \n" +
+        "Height: "+ " " + df["pref_height"].astype(str) + " \n" +
+        "Native_place: "+ " " + df["pref_native_place"].astype(str) + " \n" +
+        "Maslak_sect: "+ " " + df["pref_maslak_sect"].astype(str) + " \n" +
+        "Siblings: "+ " " + df["pref_no_of_siblings"].astype(str) + " \n" +
+        "Occupation: "+ " " + df["pref_work_job"].astype(str) + " \n" +
+        "Go to dargah: "+ " " + df["pref_go_to_dargah"].astype(str) + " \n" +
+        "Mother tongue: "+ " " + df["pref_mother_tongue"].astype(str) + " \n" +
+        "Deender: "+ " " + df["pref_deendari"].astype(str) + " \n" +
+        "location: "+ " " + df["pref_location"].astype(str) + " \n" +
+        "sect: "+ " " + df["sect"].astype(str) + " \n" +
+        "Native_place: "+ " " + df["native_place"].astype(str) + " \n" +
+        "religious_practice: "+ " " + df["religious_practice"].astype(str) + " \n" +
+        "pref_own_house: "+ " " + df["pref_own_house"].astype(str) + " \n" +
+        "Preferences: "+ " " + df["preferences"].astype(str)
+    )
+    
+    df["bio"] = (
         df["profile_id"].astype(str) + " \n" +
         df["full_name"].astype(str) + " \n" +
         "Date Of Birth: "+ " " + df["date_of_birth"].astype(str) + " \n" +
@@ -40,12 +86,14 @@ async def create_chunks(mongodb_uri, db_name, collection_name):
         "Marital Status: "+ " " + df["marital_status"].astype(str) + " \n" +
         "Gender: "+ " " + df["gender"].astype(str) + " \n" +
         "complexion: "+ " " + df["complexion"].astype(str) + " \n" +
-        "Religion: "+ " " + df["religion"].astype(str) + " \n" +
         "Education: "+ " " + df["education"].astype(str) + " \n" +
         "Height: "+ " " + df["height"].astype(str) + " \n" +
         "Native_place: "+ " " + df["native_place"].astype(str) + " \n" +
         "residence: "+ " " + df["residence"].astype(str) + " \n" +
-        "Maslak_sect: "+ " " + df["maslak_sect"].astype(str) + " \n" +
+        "Father: "+ " " + df["father"].astype(str) + " \n" +
+        "Mother: "+ " " + df["mother"].astype(str) + " \n" +
+        "Maslak_sect: "+ " " + df["sect"].astype(str) + " \n" +
+        "religious_practice: "+ " " + df["religious_practice"].astype(str) + " \n" +
         "occupation: "+ " " + df["occupation"].astype(str) + " \n" +
         "Preference: "+ " " + df["preferences"].astype(str)
     )
@@ -76,7 +124,7 @@ def extract_indices_from_vector(df, user_name,top_k):
         opposite_gender = "Female"
     elif user_gender== "Female":
         matched_df = df[df["gender"] == "Male"]  # Female searches for males
-        index_path = r"C:\Users\ThinkPad\Desktop\python projects\matrimony_backend\newvectorstore\female_index.faiss"  # Female users search in the male index
+        index_path = r"C:\Users\ThinkPad\Desktop\python projects\matrimony_backend\newvectorstore\male_index.faiss"  # Female users search in the male index
         opposite_gender = "Male"
     else:
         return pd.DataFrame(), "❌ Invalid gender."
@@ -95,8 +143,8 @@ def extract_indices_from_vector(df, user_name,top_k):
     query_embedding = normalize_embeddings(query_embedding)
 
     # Search FAISS
-    _, faiss_indices = index.search(query_embedding, k=top_k)  # Retrieve extra for filtering
-    print(f"FAISS Retrieved Indices: {faiss_indices}")
+    distance, faiss_indices = index.search(query_embedding, k=top_k)  # Retrieve extra for filtering
+    print(f"FAISS Retrieved Indices: {faiss_indices} and distances: {distance}")
     
     matched_profiles = matched_df.iloc[faiss_indices[0]]  # Ensure only opposite gender profiles are retrieved
 
@@ -145,7 +193,7 @@ def semantic_search_llm(matched_profiles, query_text):
 
             f"User Profile: {query_text}\n\n"
             "These are the potential matches:\n"
-            + "\n\n".join(matched_profiles["text"].tolist()) + "\n\n"
+            + "\n\n".join(matched_profiles["bio"].tolist()) + "\n\n"
             "Objective Your goal is to provide accurate, ethical, and structured matchmaking that aligns with Islamic principles while ensuring fairness and transparency in the scoring process. The Preferences section is given the highest weight to reflect user expectations accurately."
         )
     
@@ -163,17 +211,53 @@ def semantic_search_llm(matched_profiles, query_text):
 def transform_llm_response(llm_response):
     gemini_model = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
     
-    messages = [
-    ("system", "You are an AI assisstence"),
-    ("human", """From the following text, prepare a dictionary that contains following keys:
-     Profile, Age, Marital History, Occupation. Prepare nested dictionaries under Age, Marital History,
-      and Occupation keys and have two more keys namely score and remarks. In remarks keep everything apart from score and age. 
-     The text is as follows: {text}""")]
+    # Define the user profile schema
+    class UserProfile(BaseModel):
+        name: str
+        age_range: str
+        marital_status: str
+        religion: str
+        location: str
+        education: str
+        preferences: str
+
+    # Define a model for Match Evaluation scores
+    class MatchScore(BaseModel):
+        user_preferences: int
+        religious_alignment: int
+        personality_lifestyle: int
+        age: int
+        total_score: int
+        compatibility: str
+
+    # Define a model for each match
+    class Match(BaseModel):
+        profile_id: int = Field(description="Exctract profile_id")
+        name: str
+        age: int
+        marital_status: str 
+        occupation: str
+        education: str
+        family_background: Optional[str] = "Unknown"
+        native_place: str
+        maslak_sect: Optional[str] = Field(description="Write only the maslak or sect if available", default="Unknown")
+        religious_alignment: Optional[str] = "Unknown"
+        personality_lifestyle: Optional[str] = "Unknown"
+        preferences: str
+        score_breakdown: MatchScore
+
+    # Define a model for the overall match analysis
+    class MatchAnalysis(BaseModel):
+        user_profile: UserProfile
+        matches: List[Match]
+        conclusion: str
     
-    prompt_template = ChatPromptTemplate.from_messages(messages)
-    prompt = prompt_template.invoke({"text": llm_response})
-    result = gemini_model.invoke(prompt)
-    return result.content
+    structured_model = gemini_model.with_structured_output(MatchAnalysis)
+    
+    result = structured_model.invoke(llm_response)
+    result_dict = dict(result)
+    
+    return result_dict
     
 async def create_faiss_index(mongodb_uri, db_name, collection_name):
     """Create separate FAISS indexes for male and female profiles."""
@@ -206,8 +290,9 @@ async def create_faiss_index(mongodb_uri, db_name, collection_name):
     female_df = pd.DataFrame(female_data)
     
     # Ensure required fields exist
-    required_fields = ["profile_id", "full_name", "date_of_birth", "age", "marital_status", 
-                       "gender", "religion", "education", "height", "native_place", "preferences"]
+    required_fields = ["pref_age_range", "pref_marital_status", "pref_complexion", "pref_education", "pref_height", 
+                    "pref_native_place", "pref_maslak_sect", "pref_no_of_siblings", "pref_work_job", "pref_go_to_dargah", "pref_mother_tongue", "pref_deendari","profile_id","sect", "full_name", "date_of_birth", "age", "marital_status", 
+                "religion", "education","mother","father","maslak_sect" "height","religious_practice" ,"native_place",'occupation','preferences',"go_to_dargah"]
     for field in required_fields:
         if field not in male_df.columns:
             male_df[field] = "unknown"
@@ -215,6 +300,41 @@ async def create_faiss_index(mongodb_uri, db_name, collection_name):
         if field not in female_df.columns:
             female_df[field] = "unknown"
             
+    # male_df["text"] = (
+    #     male_df["profile_id"].astype(str) + " \n" +
+    #     male_df["full_name"].astype(str) + " \n" +
+    #     "Date Of Birth: "+ " " + male_df["date_of_birth"].astype(str) + " \n" +
+    #     "Age: "+ " " + male_df["age"].astype(str) + " \n" +
+    #     "Marital Status: "+ " " + male_df["marital_status"].astype(str) + " \n" +
+    #     "Gender: "+ " " + male_df["gender"].astype(str) + " \n" +
+    #     "complexion: "+ " " + male_df["complexion"].astype(str) + " \n" +
+    #     "Religion: "+ " " + male_df["religion"].astype(str) + " \n" +
+    #     "Education: "+ " " + male_df["education"].astype(str) + " \n" +
+    #     "Height: "+ " " + male_df["height"].astype(str) + " \n" +
+    #     "Native_place: "+ " " + male_df["native_place"].astype(str) + " \n" +
+    #     "residence: "+ " " + male_df["residence"].astype(str) + " \n" +
+    #     "Maslak_sect: "+ " " + male_df["maslak_sect"].astype(str) + " \n" +
+    #     "occupation: "+ " " + male_df["occupation"].astype(str) + " \n" +
+    #     "Preference: "+ " " + male_df["preferences"].astype(str)
+    # )
+    # female_df["text"] = (
+    #     female_df["profile_id"].astype(str) + " \n" +
+    #     female_df["full_name"].astype(str) + " \n" +
+    #     "Date Of Birth: "+ " " + female_df["date_of_birth"].astype(str) + " \n" +
+    #     "Age: "+ " " + female_df["age"].astype(str) + " \n" +
+    #     "Marital Status: "+ " " + female_df["marital_status"].astype(str) + " \n" +
+    #     "Gender: "+ " " + female_df["gender"].astype(str) + " \n" +
+    #     "complexion: "+ " " + female_df["complexion"].astype(str) + " \n" +
+    #     "Religion: "+ " " + female_df["religion"].astype(str) + " \n" +
+    #     "Education: "+ " " + female_df["education"].astype(str) + " \n" +
+    #     "Height: "+ " " + female_df["height"].astype(str) + " \n" +
+    #     "Native_place: "+ " " + female_df["native_place"].astype(str) + " \n" +
+    #     "residence: "+ " " + female_df["residence"].astype(str) + " \n" +
+    #     "Maslak_sect: "+ " " + female_df["maslak_sect"].astype(str) + " \n" +
+    #     "occupation: "+ " " + female_df["occupation"].astype(str) + " \n" +
+    #     "Preference: "+ " " + female_df["preferences"].astype(str)
+    # )
+    # normal keys
     male_df["text"] = (
         male_df["profile_id"].astype(str) + " \n" +
         male_df["full_name"].astype(str) + " \n" +
@@ -223,12 +343,15 @@ async def create_faiss_index(mongodb_uri, db_name, collection_name):
         "Marital Status: "+ " " + male_df["marital_status"].astype(str) + " \n" +
         "Gender: "+ " " + male_df["gender"].astype(str) + " \n" +
         "complexion: "+ " " + male_df["complexion"].astype(str) + " \n" +
-        "Religion: "+ " " + male_df["religion"].astype(str) + " \n" +
         "Education: "+ " " + male_df["education"].astype(str) + " \n" +
         "Height: "+ " " + male_df["height"].astype(str) + " \n" +
         "Native_place: "+ " " + male_df["native_place"].astype(str) + " \n" +
         "residence: "+ " " + male_df["residence"].astype(str) + " \n" +
-        "Maslak_sect: "+ " " + male_df["maslak_sect"].astype(str) + " \n" +
+        "Father: "+ " " + male_df["father"].astype(str) + " \n" +
+        "Mother: "+ " " + male_df["mother"].astype(str) + " \n" +
+        "sect: "+ " " + male_df["sect"].astype(str) + " \n" +
+        "religious_practice: "+ " " + male_df["religious_practice"].astype(str) + " \n" +
+        "go_to_dargah: "+ " " + male_df["go_to_dargah"].astype(str) + " \n" +
         "occupation: "+ " " + male_df["occupation"].astype(str) + " \n" +
         "Preference: "+ " " + male_df["preferences"].astype(str)
     )
@@ -240,12 +363,15 @@ async def create_faiss_index(mongodb_uri, db_name, collection_name):
         "Marital Status: "+ " " + female_df["marital_status"].astype(str) + " \n" +
         "Gender: "+ " " + female_df["gender"].astype(str) + " \n" +
         "complexion: "+ " " + female_df["complexion"].astype(str) + " \n" +
-        "Religion: "+ " " + female_df["religion"].astype(str) + " \n" +
         "Education: "+ " " + female_df["education"].astype(str) + " \n" +
         "Height: "+ " " + female_df["height"].astype(str) + " \n" +
         "Native_place: "+ " " + female_df["native_place"].astype(str) + " \n" +
         "residence: "+ " " + female_df["residence"].astype(str) + " \n" +
-        "Maslak_sect: "+ " " + female_df["maslak_sect"].astype(str) + " \n" +
+        "Father: "+ " " + female_df["father"].astype(str) + " \n" +
+        "Mother: "+ " " + female_df["mother"].astype(str) + " \n" +
+        "sect: "+ " " + female_df["sect"].astype(str) + " \n" +
+        "religious_practice,: "+ " " + female_df["religious_practice"].astype(str) + " \n" +
+        "go_to_dargah: "+ " " + female_df["go_to_dargah"].astype(str) + " \n" +
         "occupation: "+ " " + female_df["occupation"].astype(str) + " \n" +
         "Preference: "+ " " + female_df["preferences"].astype(str)
     )
