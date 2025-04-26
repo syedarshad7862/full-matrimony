@@ -1,0 +1,35 @@
+{% extends 'client_base.html' %}
+
+{% block title %}Find Matches - Matrimonial App{% endblock %}
+
+{% block content %}
+<div class="container my-3">
+<h1 class="text-center">All Profiles</h1>
+{% for profile in profiles %}
+<div class="accordion my-4 mb-2" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading{{loop.index0}}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{loop.index0}}" aria-expanded="false" aria-controls="collapse{{loop.index0}}">
+                             <h6><span>{{profile.profile_id}}</span> {{profile.full_name}}</h6>
+                        </button>
+                    </h2>
+                    <div id="collapse{{loop.index0}}" class="accordion-collapse collapse" aria-labelledby="heading{{loop.index0}}" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                          <ul type="number">
+                            <li><strong>Profile Id:</strong> {{profile.profile_id}}</li>
+                            <li><strong>Name:</strong> {{profile.full_name}}</li>
+                            <li><strong>Age/DOB:</strong> {{profile.age}} {{profile.date_of_birth}}</li>
+                            <li><strong>height:</strong> {{profile.height}}</li>
+                            <li><strong>Marital Status:</strong> {{profile.marital_status}}</li>
+                            <li><strong>Preferences:</strong> {{profile.preferences}}</li>
+                          </ul>
+                            <div class="mt-3">
+                              <button class="btn btn-warning btn-sm" onclick="editProfile('{{profile._id}}')">Edit</button>
+                          </div>
+
+                        </div>
+                    </div>
+                </div>
+</div>
+{%endfor%}
+{% endblock %}

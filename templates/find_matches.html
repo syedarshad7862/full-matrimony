@@ -47,7 +47,7 @@
 <div class="row">
     {% for match in matched_profiles %}
     <div class="col-md-4 mb-4">
-      <div class="card h-100 shadow">
+      <div class="card h-100 rounded shadow bg-white">
         <div class="card-body">
           <h5 class="card-title">{{ match.name }}</h5>
           <h6 class="card-subtitle mb-2 text-muted"><strong>Occupation:</strong>: {{ match.occupation }} | Age: {{ match.age }}</h6>
@@ -63,6 +63,7 @@
           <p class="card-text">
             <strong>Compatibility:</strong> {{ match.score_breakdown.compatibility }}<br>
             <strong>Total Score:</strong> {{ match.score_breakdown.total_score }}
+            <strong>Reasoning:</strong> {{ match.score_breakdown.Reasoning }}
           </p>
         </div>
       </div>

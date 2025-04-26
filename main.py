@@ -15,6 +15,7 @@ import os
 import json
 import datetime
 from bson import ObjectId
+from bson.errors import InvalidId
 import pdb
 from dataclasses import asdict
 
@@ -244,7 +245,7 @@ async def agent_dashboard(request: Request,user_db=Depends(get_authenticated_age
 @app.get("/upload")
 def upload_pdf(request: Request,user_db=Depends(get_authenticated_agent_db)):
     user, db = user_db
-    return templates.TemplateResponse("upload.html", {"request": request, "user": user})   
+    return templates.TemplateResponse("upload.html", {"request": request, "user": user})      
 
 # upload pdf
 @app.post("/upload-pdf")
@@ -264,6 +265,105 @@ async def upload_pdf_db(request: Request ,file: UploadFile = File(...), user_db=
         }
     added = await db["user_profiles"].insert_one(format_data)
     return RedirectResponse("/upload", status_code=303)
+
+@app.get("/profiles")
+async def get_profiles(request: Request,user_db=Depends(get_authenticated_agent_db)):
+    user, db = user_db
+    all_profiles = await db["user_profiles"].find({}).to_list(length=None)
+    return templates.TemplateResponse("profiles.html", {"request": request, "user": user, 'profiles': all_profiles})
+
+@app.get("/edit-profiles/{profile_id}")
+async def edit_profile(request: Request,profile_id: str,user_db=Depends(get_authenticated_agent_db)):
+    user, db = user_db
+    try:
+        obj_id = ObjectId(profile_id)
+    except InvalidId:
+        return {"error": "Invalid ID"}
+    profile = await db["user_profiles"].find_one({'_id': obj_id})
+    return templates.TemplateResponse("edit_profile.html", {"request": request, "user": user, 'profile':profile})
+
+@app.post("/edit-profile/{profile_id}")
+async def edit_profile_db(request: Request,
+    profile_id: str,
+    full_name: str = Form(...),
+    age: str = Form(...),
+    date_of_birth: str = Form(...),
+    gender: str = Form(...),
+    marital_status: str = Form(...),
+    complexion: str = Form(...),
+    height: str = Form(...),
+    education: str = Form(...),
+    maslak_sect: str = Form(...),
+    occupation: str = Form(...),
+    native_place: str = Form(...),
+    residence: str = Form(...),
+    location: str = Form(...),
+    siblings: str = Form(...),
+    father_name: str = Form(...),
+    mother_name: str = Form(...),
+    preferences: str = Form(...),
+    pref_age_range: str = Form(...),
+    pref_marital_status: str = Form(...),
+    pref_height: str = Form(...),
+    pref_complexion: str = Form(...),
+    pref_education: str = Form(...),
+    pref_work_job: str = Form(...),
+    pref_father_occupation: str = Form(...),
+    pref_no_of_siblings: str = Form(...),
+    pref_native_place: str = Form(...),
+    pref_mother_tongue: str = Form(...),
+    pref_go_to_dargah: str = Form(...),
+    pref_maslak_sect: str = Form(...),
+    pref_deendari: str = Form(...),
+    pref_location: str = Form(...),
+    pref_own_house: str = Form(...),
+    user_db=Depends(get_authenticated_agent_db)):
+    user, db = user_db
+    try:
+        obj_id = ObjectId(profile_id)
+    except InvalidId:
+        return {"error": "Invalid ID"}
+    updated_data = {
+        "full_name": full_name,
+        "age": age,
+        "date_of_birth": date_of_birth,
+        "gender": gender,
+        "marital_status": marital_status,
+        "complexion": complexion,
+        "height": height,
+        "education": education,
+        "maslak_sect": maslak_sect,
+        "occupation": occupation,
+        "native_place": native_place,
+        "residence": residence,
+        "location": location,
+        "siblings": siblings,
+        "father_name": father_name,
+        "mother_name": mother_name,
+        "preferences": preferences,
+        "pref_age_range": pref_age_range,
+        "pref_marital_status": pref_marital_status,
+        "pref_height": pref_height,
+        "pref_complexion": pref_complexion,
+        "pref_education": pref_education,
+        "pref_work_job": pref_work_job,
+        "pref_father_occupation": pref_father_occupation,
+        "pref_no_of_siblings": pref_no_of_siblings,
+        "pref_native_place": pref_native_place,
+        "pref_mother_tongue": pref_mother_tongue,
+        "pref_go_to_dargah": pref_go_to_dargah,
+        "pref_maslak_sect": pref_maslak_sect,
+        "pref_deendari": pref_deendari,
+        "pref_location": pref_location,
+        "pref_own_house": pref_own_house,
+    }
+    result = await db['user_profiles'].update_one(
+        {"_id": obj_id},
+        {"$set": updated_data}
+    )
+    print(result)
+    # return templates.TemplateResponse("edit_profile.html", {"request": request, "user": user})
+    return RedirectResponse(url="/profiles", status_code=303)
 
 @app.get("/find")
 async def find_matches(request: Request,user_db=Depends(get_authenticated_agent_db)):

@@ -1,0 +1,184 @@
+{% extends 'client_base.html' %}
+
+{% block title %}Edit Profile - Matrimonial App{% endblock %}
+
+{% block content %}
+
+<a href="/profiles" class="btn btn-dark mb-3">Back</a>
+<form action="/edit-profile/{{profile._id}}" method="post" class="rounded shadow bg-white mx-auto">
+    <div class="row rounded shadow mx-auto bg-white mb-3">
+    <div class="m-3 p-4">
+        <!-- <span><img src="/images/logo.jpeg" class="ml-3" alt="" width="150px" height="92px"></span> -->
+        <h2 class="">Update Your Details</h2>
+    </div>
+    <div class="col-md-11 mx-auto p-2">
+        <hr class="">
+    <div class="row mb-3 my-4">
+                <!-- <h5>Student Name</h5> -->
+        <div class="col-sm-6 mb-3">
+            <label for="date" class="form-label" id="label">Full Name<span class="text-danger">*</span></label>
+            <input type="text" name="full_name" value="{{profile.full_name}}" class="form-control" id="full_name"
+                    placeholder="" aria-describedby="label"></div>
+            <div class="col-sm-6 mb-3"><label for="date" class="form-label">Gender<span class="text-danger">*</span></label>
+                <select name="gender" class="form-select" aria-label="Default select example">
+                    <option value="{{profile.gender}}">{{profile.gender}}</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-3 my-4">
+        <div class="col-sm-6 mb-3">
+            <label for="date" class="form-label" id="label">Marital Status<span class="text-danger">*</span></label>
+            <input type="text" name="marital_status" value="{{profile.marital_status}}" class="form-control" id="marital_status"
+                    placeholder="" aria-describedby="label"></div>
+            <div class="col-sm-6 mb-3"><label for="complexion" class="form-label">Complexion/Skin Colour<span class="text-danger">*</span></label>
+                <input type="text" name="complexion" class="form-control" id="complexion"
+                    placeholder="" aria-describedby="label" value="{{profile.complexion}}">
+            </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="height" class="form-label">Height<span class="text-danger">*</span></label>
+                    <input type="text" name="height" class="form-control" id="height"
+                    placeholder="" aria-describedby="label" value="{{profile.height}}">
+                </div>
+                <div class="col-sm-6 mb-3"><label for="maslak_sect" class="form-label">Maslak Sect<span class="text-danger">*</span></label>
+                    <input type="text" name="maslak_sect" value="{{profile.sect}} {{profile.maslak_sect}}" class="form-control" id="maslak_sect"
+                    placeholder="" aria-describedby="label">
+                    </div>
+        </div>
+        <div class="row mb-3">
+                <div class="col-sm-6 mb-3">
+                    <label for="age" class="form-label" id="label">Age<span class="text-danger">*</span></label>
+                    <input type="text" name="age" value="{{profile.age}}"  class="form-control" id="age"
+                            placeholder="" aria-describedby="label"></div>
+                <div class="col-sm-6 mb-3"><label for="education" class="form-label">Education<span class="text-danger">*</span></label>
+                <input type="text" name="education" value="{{profile.education}}" class="form-control">
+                </div>
+        </div>
+        
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="mother_name" class="form-label">Mother Name<span class="text-danger">*</span></label>
+                    <input type="text" name="mother_name" value="{{profile.mother_name}}" class="form-control" >
+                </div>
+                <div class="col-sm-6 mb-3"><label for="father_name" class="form-label">Father<span class="text-danger">*</span></label>
+                    <input type="text" name="father_name" value="{{profile.father_name}}"  class="form-control" id="father_name"
+                    placeholder="" aria-describedby="label">
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="religion" class="form-label">Religion<span class="text-danger">*</span></label>
+                    <input type="text" name="religion" value="{{profile.religion}}" class="form-control" >
+                </div>
+                <div class="col-sm-6 mb-3"><label for="date" class="form-label">location<span class="text-danger">*</span></label>
+                    <input type="text" name="location" value="{{profile.location}}"  class="form-control" id="location"
+                    placeholder="" aria-describedby="label">
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="occupation" class="form-label">Occupation<span class="text-danger">*</span></label>
+                    <input type="text" name="occupation" value="{{profile.occupation}}" class="form-control" >
+                </div>
+                <div class="col-sm-6 mb-3"><label for="native_place" class="form-label">Native Place<span class="text-danger">*</span></label>
+                    <input type="text" name="native_place" value="{{profile.native_place}}"  class="form-control" id="native_place"
+                    placeholder="" aria-describedby="label" >
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="residence" class="form-label">Residence<span class="text-danger">*</span></label>
+                    <input type="text" name="residence" value="{{profile.residence}}" class="form-control" >
+                </div>
+                <div class="col-sm-6 mb-3"><label for="siblings" class="form-label">Siblings<span class="text-danger">*</span></label>
+                    <input type="text" name="siblings" value="{{profile.siblings}}"  class="form-control" id="siblings"
+                    placeholder="" aria-describedby="label">
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-md-12">
+                    <label for="Preference" class="form-label">Preference</label>
+        <textarea name="preferences" class="form-control" id="Preference" rows="4" placeholder="Enter Preference here...">{{profile.preferences}}</textarea>
+
+                    </div>
+
+                    
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="pref_age_range" class="form-label">pref_age_range<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_age_range" value="{{profile.pref_age_range}}" class="form-control" >
+                </div>
+                <div class="col-sm-6 mb-3"><label for="pref_marital_status" class="form-label">pref_marital_status<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_marital_status" value="{{profile.pref_marital_status}}"  class="form-control" id="pref_marital_status"
+                    placeholder="" aria-describedby="label">
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="pref_height" class="form-label">pref_height<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_height" value="{{profile.pref_height}}" class="form-control" >
+                </div>
+                <div class="col-sm-6 mb-3"><label for="pref_complexion" class="form-label">pref_complexion<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_complexion" value="{{profile.pref_complexion}}"  class="form-control" id="pref_complexion"
+                    placeholder="" aria-describedby="label">
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="pref_education" class="form-label">pref_education<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_education" value="{{profile.pref_education}}" class="form-control" >
+                </div>
+                <div class="col-sm-6 mb-3"><label for="pref_work_job" class="form-label">pref_work_job<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_work_job" value="{{profile.pref_work_job}}"  class="form-control" id="pref_work_job"
+                    placeholder="" aria-describedby="label">
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="pref_father_occupation" class="form-label">pref_father_occupation<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_father_occupation" value="{{profile.pref_father_occupation}}" class="form-control" >
+                </div>
+                <div class="col-sm-6 mb-3"><label for="pref_no_of_siblings" class="form-label">pref_no_of_siblings<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_no_of_siblings" value="{{profile.pref_no_of_siblings}}"  class="form-control" id="pref_no_of_siblings"
+                    placeholder="" aria-describedby="label">
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="pref_native_place" class="form-label">pref_native_place<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_native_place" value="{{profile.pref_native_place}}" class="form-control" >
+                </div>
+                <div class="col-sm-6 mb-3"><label for="pref_mother_tongue" class="form-label">pref_mother_tongue<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_mother_tongue" value="{{profile.pref_mother_tongue}}"  class="form-control" id="pref_mother_tongue"
+                    placeholder="" aria-describedby="label">
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="pref_go_to_dargah" class="form-label">pref_go_to_dargah<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_go_to_dargah" value="{{profile.pref_go_to_dargah}}" class="form-control" >
+                </div>
+                <div class="col-sm-6 mb-3"><label for="pref_maslak_sect" class="form-label">pref_maslak_sect<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_maslak_sect" value="{{profile.pref_maslak_sect}}"  class="form-control" id="pref_maslak_sect"
+                    placeholder="" aria-describedby="label">
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="pref_deendari" class="form-label">pref_deendari<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_deendari" value="{{profile.pref_deendari}}" class="form-control" >
+                </div>
+                <div class="col-sm-6 mb-3"><label for="pref_location" class="form-label">pref_location<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_location" value="{{profile.pref_location}}"  class="form-control" id="pref_location"
+                    placeholder="" aria-describedby="label">
+                    </div>
+        </div>
+        <div class="row mb-3 my-4">
+                <div class="col-sm-6 mb-3"><label for="pref_own_house" class="form-label">pref_own_house<span class="text-danger">*</span></label>
+                    <input type="text" name="pref_own_house" value="{{profile.pref_own_house}}" class="form-control" >
+                </div>
+                <div class="col-sm-6 mb-3"><label for="pref_own_house" class="form-label">Date Of Birth<span class="text-danger">*</span></label>
+                    <input type="text" name="date_of_birth" value=" {{profile.date_of_birth}}" class="form-control" >
+                </div>
+        </div>
+        <div class="text-center mx-auto my-5">
+                <button class="btn btn-dark w-50" id="">Submit</button>
+        </div>
+    </div>
+    </div>
+    </form>
+
+
+{% endblock %}

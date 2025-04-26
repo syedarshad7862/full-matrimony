@@ -196,6 +196,45 @@ def semantic_search_llm(matched_profiles, query_text):
             + "\n\n".join(matched_profiles["bio"].tolist()) + "\n\n"
             "Objective Your goal is to provide accurate, ethical, and structured matchmaking that aligns with Islamic principles while ensuring fairness and transparency in the scoring process. The Preferences section is given the highest weight to reflect user expectations accurately."
         )
+    # combined_input = (
+    #     f"""You are an AI-powered matchmaking assistant specializing in Muslim marriages. Your role is to find the most compatible matches based on religious alignment, user-defined preferences, and structured scoring. Strict cross-verification is required between the sought profile and the queried profile. The 'Preferences' section has the highest priority and must significantly impact the final score.
+
+    #     Matchmaking priorities and weights:
+
+    #     Most importantly look at the contents and context under preferences section and try matching *strictly* with that of opposite profile and vice a versa.
+    #     User Preferences with Cross Verification - 50%: *age*, *marital history*, *occupation* , *education*,*family background*, career, culture, language, religious commitment, and lifestyle. Unmet mandatory preferences lower the score.
+    #     Religious Alignment - 30%: Ensure sect alignment. Mismatches score below 50%.
+    #     Personality & Lifestyle - 10%: Shared interests refine compatibility.
+    #     Age Difference - 10%: Female age should be equal to or less than male’s unless flexibility is indicated.
+    #     Final Match Score (%) = (User Preferences * 50%) + (Religious Alignment * 30%) + (Personality * 10%) + (Age * 10%). AI must provide a percentage with a breakdown. High scores require justification. Scores below 50% indicate incompatibility.
+
+    #     Maintain fairness, transparency, and privacy. Do not force matches where religious alignment or key preferences do not match. The goal is to provide structured, ethical matchmaking aligned with Islamic principles.
+
+    #         User Profile: 
+    #         {query_text}
+    #         "These are the potential matches:
+    #         {chr(10).join(matched_profiles["bio"].tolist())}
+    #         Objective:
+    #          Your goal is to provide accurate, ethical, and structured matchmaking that aligns with Islamic principles while ensuring fairness and transparency in the scoring process. The Preferences section is given the highest weight to reflect user expectations accurately
+
+             
+    #         IMPORTANT: Output ONLY ONE final match. Do NOT give multiple match options or continue across multiple outputs.
+    #         Structure your response exactly in the following format:
+            
+    #         Match: <Matched Name and Profile ID>
+    #         Match Score: <Final Score %>
+    #         Score Breakdown:
+    #         - User Preferences Match: <value>%
+    #         - Religious Alignment: <value>%
+    #         - Personality & Lifestyle: <value>%
+    #         - Age Difference: <value>%
+
+    #         Reasoning:
+    #          <Explain why this profile was selected based on key preferences and religious alignment.>
+
+    #         """
+            
+    #     )
     
     # Send to Gemini LLM
     messages = [
@@ -229,12 +268,13 @@ def transform_llm_response(llm_response):
         age: int
         total_score: int
         compatibility: str
+        Reasoning: str
 
     # Define a model for each match
     class Match(BaseModel):
         profile_id: int = Field(description="Exctract profile_id")
         name: str
-        age: int
+        age: Optional[str] = Field(description="Write only the age or date_of_birth if available", default="Unknown")
         marital_status: str 
         occupation: str
         education: str
@@ -292,7 +332,7 @@ async def create_faiss_index(mongodb_uri, db_name, collection_name):
     # Ensure required fields exist
     required_fields = ["pref_age_range", "pref_marital_status", "pref_complexion", "pref_education", "pref_height", 
                     "pref_native_place", "pref_maslak_sect", "pref_no_of_siblings", "pref_work_job", "pref_go_to_dargah", "pref_mother_tongue", "pref_deendari","profile_id","sect", "full_name", "date_of_birth", "age", "marital_status", 
-                "religion", "education","mother","father","maslak_sect" "height","religious_practice" ,"native_place",'occupation','preferences',"go_to_dargah"]
+                "religion","location", "education","mother","father","maslak_sect", "height","religious_practice" ,"native_place",'occupation','preferences',"go_to_dargah"]
     for field in required_fields:
         if field not in male_df.columns:
             male_df[field] = "unknown"
@@ -347,6 +387,7 @@ async def create_faiss_index(mongodb_uri, db_name, collection_name):
         "Height: "+ " " + male_df["height"].astype(str) + " \n" +
         "Native_place: "+ " " + male_df["native_place"].astype(str) + " \n" +
         "residence: "+ " " + male_df["residence"].astype(str) + " \n" +
+        "Location: "+ " " + male_df["location"].astype(str) + " \n" +
         "Father: "+ " " + male_df["father"].astype(str) + " \n" +
         "Mother: "+ " " + male_df["mother"].astype(str) + " \n" +
         "sect: "+ " " + male_df["sect"].astype(str) + " \n" +
@@ -367,6 +408,7 @@ async def create_faiss_index(mongodb_uri, db_name, collection_name):
         "Height: "+ " " + female_df["height"].astype(str) + " \n" +
         "Native_place: "+ " " + female_df["native_place"].astype(str) + " \n" +
         "residence: "+ " " + female_df["residence"].astype(str) + " \n" +
+        "Location: "+ " " + female_df["location"].astype(str) + " \n" +
         "Father: "+ " " + female_df["father"].astype(str) + " \n" +
         "Mother: "+ " " + female_df["mother"].astype(str) + " \n" +
         "sect: "+ " " + female_df["sect"].astype(str) + " \n" +
@@ -398,3 +440,18 @@ async def create_faiss_index(mongodb_uri, db_name, collection_name):
     faiss.write_index(female_index, "newvectorstore/female_index.faiss")  # Female users will search here (matches Male)
 
     print("✅ FAISS indexes created successfully.")
+
+
+from datetime import datetime
+
+def calculate_age_from_dob(dob_str: str) -> int:
+    """
+    Calculate age from date of birth string (format: YYYY-MM-DD).
+    """
+    dob = datetime.strptime(dob_str, "%Y-%m-%d")
+    today = datetime.today()
+    age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+    return age
+
+age = calculate_age_from_dob("2002-8-24")
+print(age)

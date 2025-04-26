@@ -16,7 +16,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login_agent")
 load_dotenv()
 SECRET_KEY = "matrimonial-meer-ahmed-sir"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 25
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 MONGO_URI = os.getenv("MONGO_URI")
 # connect = MongoClient(MONGO_URI)
