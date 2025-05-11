@@ -4,7 +4,40 @@
 
 {% block content %}
 <div class="container my-3">
-<h1 class="text-center">All Profiles</h1>
+
+<!-- <div>
+<h1>Filter Profiles</h1>
+
+  <select id="filter-select">
+    <option value="10">10%</option>
+    <option value="50">50%</option>
+    <option value="80">80%</option>
+    <option value="100">100%</option>
+  </select>
+  <button onclick="loadProfiles()" class="btn btn-dark">Load Profiles</button>
+</div> -->
+
+<div>
+  <h2>Filter by Profile Completion</h2>
+<form method="get" action="/api/filtered-profiles" onsubmit="showLoader()">
+    <label class="form-label" for="min_completion">Minimum Completion (%):</label>
+    <!-- <input type="number" name="min_completion" min="0" max="100" value="{{ min_completion }}"> -->
+    <select name="min_completion" class="form-select" id="min_completion">
+    <option value="10">10%</option>
+    <option value="50">50%</option>
+    <option value="80">80%</option>
+    <option value="100">100%</option>
+  </select>
+    <button type="submit" class="btn btn-outline-dark my-2">Filter</button>
+</form>
+</div>
+<h1 class="text-center">All Profiles({{total_profiles}})</h1>
+{% if total_profiles == 0 %}
+  <h2 class="text-center">no Profiles</h2>
+{% else%}
+<div class="spinner-border" id="loader" style="display: none;" role="status">
+  <span class="visually-hidden text-center">Loading...</span>
+</div>
 {% for profile in profiles %}
 <div class="accordion my-4 mb-2" id="accordionExample">
                 <div class="accordion-item">
@@ -32,4 +65,5 @@
                 </div>
 </div>
 {%endfor%}
+{%endif%}
 {% endblock %}

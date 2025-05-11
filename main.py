@@ -3,11 +3,11 @@ from config.db import client,agents_db
 from models.user import UserRegister,UserLogin,UserUpdateBioData
 from utils import hash_password, verify_password, create_jwt_token,create_access_token, get_authenticated_agent_db
 from auth import get_current_user,admin_required
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, StreamingResponse,JSONResponse
 from starlette.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-# from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from passlib.context import CryptContext
 from functions.extract_text import extract_text_from_pdf
 from functions.search_matches import create_chunks,extract_indices_from_vector,semantic_search_llm,create_faiss_index,transform_llm_response
@@ -18,6 +18,10 @@ from bson import ObjectId
 from bson.errors import InvalidId
 import pdb
 from dataclasses import asdict
+from typing import Optional
+import csv
+import io
+import time
 
 app = FastAPI()
 
@@ -31,6 +35,14 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 #     allow_methods=["*"],
 #     allow_headers=["*"],
 # )
+# Allow frontend to access backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 UPLOAD_DIR = "uploads"  # Directory to store uploaded PDFs
 os.makedirs(UPLOAD_DIR, exist_ok=True)  # Create folder if not exists
 # Serve static files
@@ -266,11 +278,12 @@ async def upload_pdf_db(request: Request ,file: UploadFile = File(...), user_db=
     added = await db["user_profiles"].insert_one(format_data)
     return RedirectResponse("/upload", status_code=303)
 
-@app.get("/profiles")
-async def get_profiles(request: Request,user_db=Depends(get_authenticated_agent_db)):
-    user, db = user_db
-    all_profiles = await db["user_profiles"].find({}).to_list(length=None)
-    return templates.TemplateResponse("profiles.html", {"request": request, "user": user, 'profiles': all_profiles})
+# @app.get("/profiles")
+# async def get_profiles(request: Request,user_db=Depends(get_authenticated_agent_db)):
+#     user, db = user_db
+#     # all_profiles = await db["user_profiles"].find({}).to_list(length=None)
+#     # return templates.TemplateResponse("profiles.html", {"request": request, "user": user, 'profiles': all_profiles})
+#     return templates.TemplateResponse("profiles.html", {"request": request, "user": user})
 
 @app.get("/edit-profiles/{profile_id}")
 async def edit_profile(request: Request,profile_id: str,user_db=Depends(get_authenticated_agent_db)):
@@ -412,8 +425,7 @@ async def show_matches(
     result = transform_llm_response(llm_response)
     # Convert all Match dataclass objects to plain dictionaries
     matches = [m.dict() for m in result['matches']]
-    print(matches)
-    print(f"selected_profile: {selected_profile}")
+    print(f"selected_profile: {selected_profile} \n\n Matches Profiles: {matches} \n\n matched_profiles: {matched_profiles}")
     # pdb.set_trace()
     return templates.TemplateResponse(
     "find_matches.html",
@@ -422,23 +434,114 @@ async def show_matches(
         "user": user,
         "profiles": await db["user_profiles"].find({}).to_list(length=None),
         "selected_profile": selected_profile,
-        "matched_profiles": matches  # your transformed matches
+        "matched_profiles": matches,  # your transformed matches
+        "top": top
+        
     }
 )
 
+@app.post("/download_matches_csv")
+async def download_matches_csv(
+    profile_id: str = Form(...),
+    top: str = Form(...),
+    user_db=Depends(get_authenticated_agent_db)
+):
+    user, db = user_db
+    print(f"{top} type of top: {type(top)}")
+    selected_profile = await db["user_profiles"].find_one({"_id": ObjectId(profile_id)})
+    if not selected_profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
 
+    full_name = selected_profile.get("full_name", "Name not found")
 
-    # return templates.TemplateResponse(
-    #     "show_matches.html",
-    #     {"request": request, "user": user, "selected_profile": selected_profile}
-    # )
-    
+    texts, profile_df = await create_chunks(MONGO_URI, db.name, "user_profiles")
+
+    matched_profiles, query_text = extract_indices_from_vector(profile_df, full_name, int(top))
+
+    if matched_profiles.empty:
+        raise HTTPException(status_code=404, detail="No matches found")
+
+    llm_response = semantic_search_llm(matched_profiles, query_text)
+    result = transform_llm_response(llm_response)
+    matches = [m.dict() for m in result['matches']]
+    print(f"matched_profiles: {type(matched_profiles)}\n\n matches: {type(matches)}")
+    # pdb.set_trace()
+    # Prepare CSV
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Write Selected Profile First
+    writer.writerow(["Selected Profile"])  # Title
+    for key, value in selected_profile.items():
+        writer.writerow([key, value])
+
+    # Optional separator
+    writer.writerow([])
+    writer.writerow(["Matched Profiles"])
+
+    # if matches:
+    #     # Write Matched Profiles Headers
+    #     writer.writerow(matches[0].keys())
+
+    #     # Write Matched Profiles Data
+    #     for match in matches:
+    #         writer.writerow(match.values())
+    if not matched_profiles.empty:
+        output.write(matched_profiles.to_csv(index=False))
+
+    output.seek(0)
+
+    return StreamingResponse(output, media_type="text/csv", headers={
+        "Content-Disposition": "attachment; filename=matched_profiles.csv"
+    })    
 @app.post("/create-vectors")
 async def create_vector(request: Request, user_db= Depends(get_authenticated_agent_db)):
     user, db = user_db
     await create_faiss_index(MONGO_URI,db.name,"user_profiles")
     print(MONGO_URI,db.name,"user_profiles")
     return {"message": "Created vectors successfully!"}
+
+# profile completion filter
+@app.get("/api/filtered-profiles")
+async def profile_completion(request: Request,user_db = Depends(get_authenticated_agent_db), min_completion: Optional[int] = 10):
+    try:
+        # time.sleep(5)  # simulate delay
+        user, db = user_db
+        query = {"profile_completion": {"$gte": min_completion}}
+        print(query)
+        profiles = await db["user_profiles"].find(query).to_list(length=None)
+        print(len(profiles))
+        # return {"message": profiles}
+        return templates.TemplateResponse("profiles.html", {
+            "request": request,
+            "user": user,
+            "total_profiles": len(profiles),
+            "profiles": profiles,
+            "min_completion": min_completion
+        })
+        # return JSONResponse(content={"profiles": profiles,"user": user})
+    except Exception as e:
+        return HTTPException(status_code=500, detail="Error: {e}")
+
+@app.get("/api/full-details")
+async def full_details_json(profile_id: int, user_db = Depends(get_authenticated_agent_db)):
+    user, db = user_db
+    profile = await db["user_profiles"].find_one({"profile_id": profile_id})
+    if not profile:
+        return JSONResponse(status_code=404, content={"error": "Profile not found"})
+    # Convert ObjectId to str
+    profile["_id"] = str(profile["_id"])
+    print(profile)
+    return profile  # FastAPI will return JSON
+
+# @app.post("/api/full-details")
+# async def full_details(request: Request, profile_id: int = Form(...), user_db = Depends(get_authenticated_agent_db)):
+#     user, db = user_db
+#     profile = await db["user_profiles"].find_one({"profile_id": profile_id})
+#     return templates.TemplateResponse("full_profile.html", {
+#         "request": request,
+#         "profile": profile
+#     })
 # logout route
 @app.get("/logout")
 async def logout():
@@ -461,4 +564,4 @@ async def get_profile(request: Request,user_db=Depends(get_authenticated_agent_d
 
 @app.get("/admin/dashboard")
 def admin_dashboard(admin: dict = Depends(admin_required)):
-    return {"message": "Welcome to admin dashboard", "admin": admin}
+    return {"message": "Welcome to admin dashboard", "admin": admin} 
