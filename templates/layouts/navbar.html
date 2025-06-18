@@ -9,13 +9,13 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/dashboard">Home</a>
+          <a class="nav-link active" aria-current="page" href="/auth/dashboard">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/find">Find Matchs</a>
+          <a class="nav-link" href="/match/find">Find Matchs</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/api/filtered-profiles">Profiles</a>
+          <a class="nav-link" href="/profile/api/filtered-profiles">Profiles</a>
         </li>
         <!-- <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -41,19 +41,19 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="/view-profile">View Profile</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/add-profile">Add Profile</a></li>
+            <li><a class="dropdown-item" href="/profile/add-profile">Add Profile</a></li>
             <li><a class="dropdown-item" href="/upload">Upload Pdf</a></li>
             <!-- <li><a class="dropdown-item" href="/create-vectors">Generate Emebeddings</a></li> -->
             <!-- <form id="deleteForm" method="post" action="/delete">
               <button type="submit" class="btn btn-danger dropdown-item" onclick="return confirmDelete()">Delete Biodata</button>
           </form> -->
-            <form id="deleteFor" method="post" action="/create-vectors">
+            <form id="deleteFor" method="post" action="/match/create-vectors">
               <button type="submit" class="btn btn-danger dropdown-item">Generate Emebeddings</button>
           </form>
             <!-- <li><a class="dropdown-item" href="#">Separated link</a></li> -->
           </ul>
         </div>
-        <a href="/logout"><button class="btn btn-outline-dark me-2" type="submit">Logout</button></a>
+        <a href="/auth/logout"><button class="btn btn-outline-dark me-2" type="submit">Logout</button></a>
       </div>
     </div>
     {%endif%}

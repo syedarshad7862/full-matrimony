@@ -1,0 +1,27 @@
+**B. Optential Preferences Match (Max Score: [22] points)**
+   *This section reflects how well the user match meets the optential's explicitly stated preferences.*
+
+   1.  **Preferred Age Range Match (Max: [5] points):**
+        * If user match 'age' is within optential 'Preferred Age Range': [5] points.
+        * If user match 'age' is outside by 1-2 years: [4] points.
+        * If user match 'age' is outside by 3-5 years: [3] points.
+        * Otherwise: 0 points.
+   2.  **Preferred Education Match (Max: [5] points):**
+        * If user match 'education' exactly matches potential 'Preferred Education': [5] points.
+        * If user match 'education' is one level higher than optential 'Preferred Education' (e.g., Masters vs. Bachelors): [5] points.
+        * If user match 'education' is one level lower: [4] points.
+        * Otherwise: 0 points. (optential profile education vs user profile education if it is not match.)
+   3.  **Preferred Height Match (Max: [5] points):**
+        * If user match 'height' is within optential 'Preferred Height' range (height will in this format e.g., 5'6" - 5'10",5ft etc): [5] points.
+		* If user match 'height' exactly matches optential 'Preferred Height' range: [5] points.
+        * If user match 'height' is outside by 1-2 inches: [3] points.
+        * Otherwise: 0 points.
+   4.  **Preferred Native Place Match (vs. Location/Native Place) (Max: [2] points):**
+        * If optential's 'Native Place' exactly matches user match's 'native place': [2] points.
+        * If optential's 'Native Place' exactly matches user match's 'location' (but not 'native place'): 2 points.
+        * If optential's 'Native Place' (City/Town) is in the same District/State as user match's 'native place' or 'location': 1 points.
+        * Otherwise: 0 points.
+   5.  **optential's Religious Practices Match (vs. Sect/Maslak_Sect/Preferences) (Max: [5] points):**
+        * If optential's 'Religious Practices' (e.g., specific Maslak or level of observance if detailed) exactly matches user match's 'Sect'/'Maslak_Sect'/'Preferences': [5] points.
+        * If considered compatible but not an exact match (e.g., different but mutually acceptable Maslaks - YOU define this): [2] points.
+        * Otherwise: 0 points.

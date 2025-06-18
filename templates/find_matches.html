@@ -5,7 +5,7 @@
 {% block content %}
     <div class="container my-5">
     <h2 class="text-center">Select User Profile</h2>
-    <form action="/show_matches" method="post" enctype="multipart/form-data" onsubmit="disableBtn()">
+    <form action="/match/show_matches" method="post" enctype="multipart/form-data" onsubmit="disableBtn()">
         <div class="row mb-3 my-3 p-3 rounded shadow bg-white mx-auto">
                 <!-- <h5>Student Name</h5> -->
         <div class="col-sm-6 mb-3">
@@ -27,9 +27,6 @@
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="15">15</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="40">40</option>
                 </select>
             </div>
         </div>
@@ -70,6 +67,8 @@
             <strong>Native Place:</strong> {{ match.native_place }}<br>
             <strong>Family Background:</strong> {{ match.family_background }}<br>
             <strong>Preferences:</strong> {{ match.preferences }}<br>
+            <strong>Preferred Age Range:</strong> {{ match.pref_age_range }}<br>
+            <strong>Preferred height:</strong> {{ match.pref_height }}<br>
           </p>
           <hr>
           <p class="card-text">
@@ -98,7 +97,7 @@
     </div>
     {% endfor %}
     {% if matched_profiles %}
-    <form method="post" action="/download_matches_csv">
+    <form method="post" action="/match/download_matches_csv">
         <input type="hidden" name="profile_id" value="{{ selected_profile['_id'] }}">
         <input type="hidden" name="top" value="{{ top }}">
         <button type="submit" class="btn btn-primary text-center">Download Matched Profiles (CSV)</button>

@@ -5,7 +5,7 @@ console.log("this is working")
 
 function editProfile(id) {
     console.log("running inside edit fn")
-    window.location.href = '/edit-profiles/' + id;
+    window.location.href = '/profile/edit-profiles/' + id;
 }
 
 // GetRequest method
@@ -56,7 +56,7 @@ function disableBtn(){
 }
 
 function fetchFullProfile(profileId) {
-  fetch(`/api/full-details?profile_id=${profileId}`)
+  fetch(`/match/api/full-details?profile_id=${profileId}`)
     .then(response => {
       if (!response.ok) throw new Error("Profile not found");
       return response.json();
@@ -72,7 +72,6 @@ function fetchFullProfile(profileId) {
         <p><strong>Education:</strong> ${profile.education}</p>
         <p><strong>Marital Status:</strong> ${profile.marital_status}</p>
         <p><strong>Maslak/Sect:</strong> ${profile.maslak_sect}</p>
-        <p><strong>Education:</strong> ${profile.contact_no}</p>
         <p><strong>Native Place:</strong> ${profile.native_place}</p>
         <p><strong>Family Background:</strong> ${profile.family_background}</p>
         <p><strong>Preferences:</strong> ${profile.preferences}</p>
